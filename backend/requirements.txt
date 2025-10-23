@@ -1,0 +1,7 @@
+uvicorn
+fastapi
+python-dotenv
+python-multipart
+boto3
+mangum
+pypdf

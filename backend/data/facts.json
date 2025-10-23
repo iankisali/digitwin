@@ -1,0 +1,21 @@
+{
+    "full_name": "Ian Kisali",
+    "name": "Kisali",
+    "current_role": "DevOps Engineer at I&M Bank",
+    "location": "Nairobi, Kenya",
+    "email": "iankisali@gmail.com",
+    "linkedin": "linkedin.com/in/iankisali",
+    "specialties": [
+      "Kubernetes",
+      "AWS Cloud",
+      "Monitoring and Observability"
+    ],
+    "years_experience": 2,
+    "education": [
+      {
+        "degree": "Electrical and Information Engineering",
+        "institution": "University of Nairobi",
+        "year": "2023"
+      }
+    ]
+  }
