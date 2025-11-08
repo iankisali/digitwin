@@ -11,7 +11,7 @@ if [ $# -eq 0 ]; then
 fi
 
 ENVIRONMENT=$1
-PROJECT_NAME=${2:-twin}
+PROJECT_NAME=${2:-digitwin}
 
 echo "🗑️ Preparing to destroy ${PROJECT_NAME}-${ENVIRONMENT} infrastructure..."
 
@@ -19,16 +19,24 @@ echo "🗑️ Preparing to destroy ${PROJECT_NAME}-${ENVIRONMENT} infrastructure
 cd "$(dirname "$0")/../terraform"
 
 # Get AWS Account ID and Region for backend configuration
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
+export AWS_PROFILE=ai
+
+# Remove .terraform directory if it exists to force fresh initialization
+if [ -d ".terraform" ]; then
+  echo "🧹 Cleaning existing .terraform directory..."
+  rm -rf .terraform
+fi
 
 # Initialize terraform with S3 backend
 echo "🔧 Initializing Terraform with S3 backend..."
-terraform init -input=false \
-  -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID}" \
+terraform init -input=false -migrate-state -force-copy \
+  -backend-config="bucket=digitwin-terraform-state-${AWS_ACCOUNT_ID}" \
   -backend-config="key=${ENVIRONMENT}/terraform.tfstate" \
   -backend-config="region=${AWS_REGION}" \
-  -backend-config="dynamodb_table=twin-terraform-locks" \
+  -backend-config="use_lockfile=true" \
+  -backend-config="dynamodb_table=digitwin-terraform-locks" \
   -backend-config="encrypt=true"
 
 # Check if workspace exists
@@ -49,17 +57,17 @@ FRONTEND_BUCKET="${PROJECT_NAME}-${ENVIRONMENT}-frontend-${AWS_ACCOUNT_ID}"
 MEMORY_BUCKET="${PROJECT_NAME}-${ENVIRONMENT}-memory-${AWS_ACCOUNT_ID}"
 
 # Empty frontend bucket if it exists
-if aws s3 ls "s3://$FRONTEND_BUCKET" 2>/dev/null; then
+if aws s3 ls "s3://$FRONTEND_BUCKET" --profile ai 2>/dev/null; then
     echo "  Emptying $FRONTEND_BUCKET..."
-    aws s3 rm "s3://$FRONTEND_BUCKET" --recursive
+    aws s3 rm "s3://$FRONTEND_BUCKET" --recursive --profile ai
 else
     echo "  Frontend bucket not found or already empty"
 fi
 
 # Empty memory bucket if it exists
-if aws s3 ls "s3://$MEMORY_BUCKET" 2>/dev/null; then
+if aws s3 ls "s3://$MEMORY_BUCKET" --profile ai 2>/dev/null; then
     echo "  Emptying $MEMORY_BUCKET..."
-    aws s3 rm "s3://$MEMORY_BUCKET" --recursive
+    aws s3 rm "s3://$MEMORY_BUCKET" --recursive --profile ai
 else
     echo "  Memory bucket not found or already empty"
 fi
