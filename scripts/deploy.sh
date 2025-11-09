@@ -14,13 +14,23 @@ echo "📦 Building Lambda package..."
 # 2. Terraform workspace & apply
 cd terraform
 #terraform init -input=false
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+#aws configure --profile ai
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
-terraform init -input=false \
-  -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID}" \
+export AWS_PROFILE=ai
+
+# Remove .terraform directory if it exists to force fresh initialization
+if [ -d ".terraform" ]; then
+  echo "🧹 Cleaning existing .terraform directory..."
+  rm -rf .terraform
+fi
+
+terraform init -input=false -migrate-state -force-copy \
+  -backend-config="bucket=digitwin-terraform-state-${AWS_ACCOUNT_ID}" \
   -backend-config="key=${ENVIRONMENT}/terraform.tfstate" \
   -backend-config="region=${AWS_REGION}" \
-  -backend-config="dynamodb_table=twin-terraform-locks" \
+  -backend-config="use_lockfile=true" \
+  -backend-config="dynamodb_table=digitwin-terraform-locks" \
   -backend-config="encrypt=true"
 
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
