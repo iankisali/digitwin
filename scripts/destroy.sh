@@ -18,10 +18,20 @@ echo "🗑️ Preparing to destroy ${PROJECT_NAME}-${ENVIRONMENT} infrastructure
 # Navigate to terraform directory
 cd "$(dirname "$0")/../terraform"
 
-# Get AWS Account ID and Region for backend configuration
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
+# Detect if running in CI (GitHub Actions)
+if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
+  # In CI, use default credentials from environment variables
+  AWS_PROFILE_ARG=""
+  AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+  export AWS_PROFILE=""
+else
+  # Local development, use 'ai' profile
+  AWS_PROFILE_ARG="--profile ai"
+  AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
+  export AWS_PROFILE=ai
+fi
+
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
-export AWS_PROFILE=ai
 
 # Remove .terraform directory if it exists to force fresh initialization
 if [ -d ".terraform" ]; then
@@ -57,17 +67,17 @@ FRONTEND_BUCKET="${PROJECT_NAME}-${ENVIRONMENT}-frontend-${AWS_ACCOUNT_ID}"
 MEMORY_BUCKET="${PROJECT_NAME}-${ENVIRONMENT}-memory-${AWS_ACCOUNT_ID}"
 
 # Empty frontend bucket if it exists
-if aws s3 ls "s3://$FRONTEND_BUCKET" --profile ai 2>/dev/null; then
+if aws s3 ls "s3://$FRONTEND_BUCKET" $AWS_PROFILE_ARG 2>/dev/null; then
     echo "  Emptying $FRONTEND_BUCKET..."
-    aws s3 rm "s3://$FRONTEND_BUCKET" --recursive --profile ai
+    aws s3 rm "s3://$FRONTEND_BUCKET" --recursive $AWS_PROFILE_ARG
 else
     echo "  Frontend bucket not found or already empty"
 fi
 
 # Empty memory bucket if it exists
-if aws s3 ls "s3://$MEMORY_BUCKET" --profile ai 2>/dev/null; then
+if aws s3 ls "s3://$MEMORY_BUCKET" $AWS_PROFILE_ARG 2>/dev/null; then
     echo "  Emptying $MEMORY_BUCKET..."
-    aws s3 rm "s3://$MEMORY_BUCKET" --recursive --profile ai
+    aws s3 rm "s3://$MEMORY_BUCKET" --recursive $AWS_PROFILE_ARG
 else
     echo "  Memory bucket not found or already empty"
 fi

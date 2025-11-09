@@ -15,9 +15,21 @@ echo "📦 Building Lambda package..."
 cd terraform
 #terraform init -input=false
 #aws configure --profile ai
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
+
+# Detect if running in CI (GitHub Actions)
+if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
+  # In CI, use default credentials from environment variables
+  AWS_PROFILE_ARG=""
+  AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+  export AWS_PROFILE=""
+else
+  # Local development, use 'ai' profile
+  AWS_PROFILE_ARG="--profile ai"
+  AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --profile ai)
+  export AWS_PROFILE=ai
+fi
+
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
-export AWS_PROFILE=ai
 
 # Remove .terraform directory if it exists to force fresh initialization
 if [ -d ".terraform" ]; then
@@ -63,7 +75,7 @@ echo "NEXT_PUBLIC_API_URL=$API_URL" > .env.production
 echo "📝 npm install and build..."
 npm install
 npm run build
-aws s3 sync ./out "s3://$FRONTEND_BUCKET/" --delete --profile ai
+aws s3 sync ./out "s3://$FRONTEND_BUCKET/" --delete $AWS_PROFILE_ARG
 cd ..
 
 # 4. Final messages
