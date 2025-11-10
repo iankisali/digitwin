@@ -10,12 +10,20 @@ terraform {
 }
 
 provider "aws" {
-  profile = "ai"
+  # Uncomment this to use the 'ai' profile locally
+  #profile = "ai"
+  # Profile is set via AWS_PROFILE environment variable
+  # In CI: AWS_PROFILE="" (uses default credentials)
+  # Locally: AWS_PROFILE=ai (uses 'ai' profile)
   region = "us-east-1"
 }
 
 provider "aws" {
   alias   = "us_east_1"
-  profile = "ai"
+  # Uncomment this to use the 'ai' profile locally
+  #profile = "ai"
+  # Profile is set via AWS_PROFILE environment variable
+  # In CI: AWS_PROFILE="" (uses default credentials)
+  # Locally: AWS_PROFILE=ai (uses 'ai' profile)
   region  = "us-east-1"
 }
