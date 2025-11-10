@@ -21,7 +21,7 @@ if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
   # In CI, use default credentials from environment variables
   AWS_PROFILE_ARG=""
   AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-  export AWS_PROFILE=""
+  unset AWS_PROFILE
 else
   # Local development, use 'ai' profile
   AWS_PROFILE_ARG="--profile ai"
