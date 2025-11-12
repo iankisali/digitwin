@@ -110,7 +110,7 @@ export default function Twin() {
                     <Bot className="w-6 h-6" />
                     AI Digital Twin
                 </h2>
-                <p className="text-sm text-slate-300 mt-1">Your AI course companion</p>
+                <p className="text-sm text-slate-300 mt-1">Digital Twin companion</p>
             </div>
 
             {/* Messages */}
@@ -118,16 +118,16 @@ export default function Twin() {
                 {messages.length === 0 && (
                     <div className="text-center text-gray-500 mt-8">
                         {hasAvatar ? (
-                            <img 
-                                src="/profile.png" 
-                                alt="Digital Twin Avatar" 
+                            <img
+                                src="/profile.png"
+                                alt="Digital Twin Avatar"
                                 className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-gray-300"
                             />
                         ) : (
                             <Bot className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                         )}
-                        <p>Hello! I&apos;m your Digital Twin.</p>
-                        <p className="text-sm mt-2">Ask me anything about AI deployment!</p>
+                        <p>Hello! I&apos;m Ian&apos;s Digital Twin.</p>
+                        <p className="text-sm mt-2">Ask me anything about Ian&apos;s professional profile!</p>
                     </div>
                 )}
 
