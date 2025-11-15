@@ -9,7 +9,7 @@ export default function Home() {
             Digitwin
           </h1>
           <p className="text-center text-gray-600 mb-8">
-            Ian Kisali's Digital Twin
+            Ian Kisali&apos;s Digital Twin
           </p>
 
           <div className="h-[600px]">

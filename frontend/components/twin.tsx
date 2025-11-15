@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
+import Image from 'next/image';
 
 interface Message {
     id: string;
@@ -118,9 +119,11 @@ export default function Twin() {
                 {messages.length === 0 && (
                     <div className="text-center text-gray-500 mt-8">
                         {hasAvatar ? (
-                            <img
+                            <Image
                                 src="/profile.png"
                                 alt="Digital Twin Avatar"
+                                width={80}
+                                height={80}
                                 className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-gray-300"
                             />
                         ) : (
@@ -141,9 +144,11 @@ export default function Twin() {
                         {message.role === 'assistant' && (
                             <div className="flex-shrink-0">
                                 {hasAvatar ? (
-                                    <img 
+                                    <Image 
                                         src="/profile.png" 
                                         alt="Digital Twin Avatar" 
+                                        width={32}
+                                        height={32}
                                         className="w-8 h-8 rounded-full border border-slate-300"
                                     />
                                 ) : (
@@ -185,9 +190,11 @@ export default function Twin() {
                     <div className="flex gap-3 justify-start">
                         <div className="flex-shrink-0">
                             {hasAvatar ? (
-                                <img 
+                                <Image 
                                     src="/profile.png" 
                                     alt="Digital Twin Avatar" 
+                                    width={32}
+                                    height={32}
                                     className="w-8 h-8 rounded-full border border-slate-300"
                                 />
                             ) : (
