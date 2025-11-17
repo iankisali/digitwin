@@ -1,4 +1,4 @@
-name: Destroy Digitwin environment
+name: Destroy Digitwin Environment
 
 on:
   workflow_dispatch:
