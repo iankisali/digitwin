@@ -21,7 +21,7 @@ export default function Home() {
             <p className="mt-1">
               <a href="mailto:iankisali@gmail.com" className="hover:text-slate-700 underline">iankisali@gmail.com</a>
               {' • '}
-              <a href="https://linkedin.com/in/iankisali" target="_blank" rel="noopener noreferrer" className="hover:text-slate-700 underline">LinkedIn</a>
+              <a href="https://www.linkedin.com/in/ian-kisali/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-700 underline">LinkedIn</a>
             </p>
           </footer>
         </div>
